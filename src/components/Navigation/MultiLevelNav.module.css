@@ -1,0 +1,172 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.allItems {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin: 8px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.allItems:hover {
+  background: rgba(0, 184, 148, 0.08);
+}
+
+.allIcon {
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.allLabel {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.treeNode {
+  width: 100%;
+}
+
+.nodeContent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-radius: 0;
+}
+
+.nodeContent:hover {
+  background: rgba(0, 184, 148, 0.06);
+}
+
+.nodeContent.selected {
+  background: rgba(0, 184, 148, 0.12);
+}
+
+.nodeContent.selected .nodeName {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.expandBtn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-secondary);
+  transition: all var(--transition-fast);
+}
+
+.expandBtn.hasChildren {
+  cursor: pointer;
+}
+
+.expandBtn.hasChildren:hover {
+  background: var(--color-border);
+  color: var(--color-primary);
+}
+
+.folderIcon {
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.nodeContent.selected .folderIcon {
+  color: var(--color-accent);
+}
+
+.nodeName {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  background: var(--color-border);
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nodeContent.selected .badge {
+  background: var(--color-accent);
+  color: white;
+}
+
+.children {
+  animation: expandIn 250ms ease-out;
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: calc(100% - 16px);
+  margin: 8px;
+  padding: 10px;
+  background: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-secondary);
+  font-size: 13px;
+  transition: all var(--transition-fast);
+}
+
+.addBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(0, 184, 148, 0.04);
+}

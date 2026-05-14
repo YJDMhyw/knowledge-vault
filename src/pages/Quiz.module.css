@@ -1,0 +1,232 @@
+.page {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.headerBackBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.headerBackBtn:hover {
+  background: linear-gradient(135deg, rgba(0, 184, 148, 0.08) 0%, transparent 100%);
+  border-color: var(--color-accent);
+  transform: translateX(-4px);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-secondary);
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 20px;
+  text-align: center;
+}
+
+.errorText {
+  font-size: 16px;
+  color: var(--color-secondary);
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #00D9A5 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 14px rgba(0, 184, 148, 0.3);
+}
+
+.backBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+}
+
+.startScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.startCard {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  text-align: center;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+}
+
+.startIcon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #00D9A5 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0 auto 28px;
+  box-shadow: 0 8px 24px rgba(0, 184, 148, 0.3);
+}
+
+.startTitle {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.startDesc {
+  font-size: 15px;
+  color: var(--color-secondary);
+  margin-bottom: 28px;
+}
+
+.startBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 40px;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #00D9A5 100%);
+  color: white;
+  border-radius: var(--radius-lg);
+  font-size: 16px;
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 14px rgba(0, 184, 148, 0.3);
+}
+
+.startBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+}
+
+.noData {
+  font-size: 15px;
+  color: var(--color-secondary);
+  padding: 20px;
+  background: rgba(0, 184, 148, 0.05);
+  border-radius: var(--radius-md);
+}
+
+.quizArea {
+  padding: 20px 0;
+}
+
+.resultScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.resultActions {
+  display: flex;
+  gap: 16px;
+}
+
+.restartBtn {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #00D9A5 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 14px rgba(0, 184, 148, 0.3);
+}
+
+.restartBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+}
+
+.backToListBtn {
+  padding: 14px 32px;
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-secondary);
+  transition: all var(--transition-fast);
+}
+
+.backToListBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+@media (max-width: 640px) {
+  .startCard {
+    padding: 36px 24px;
+  }
+
+  .header {
+    flex-wrap: wrap;
+  }
+
+  .headerContent {
+    order: 2;
+    width: 100%;
+  }
+
+  .resultActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .restartBtn,
+  .backToListBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
