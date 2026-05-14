@@ -712,9 +712,17 @@
                 }).length;
 
                 return `
-                    <div class="card" onclick="openTopLevel('${tl.id}')">
-                        <div class="card-title">${escapeHtml(tl.name)}</div>
-                        <div class="card-meta">${subCount} 个子目录 · ${conceptCount} 个概念</div>
+                    <div class="list-item">
+                        <div class="list-item-header">
+                            <div onclick="openTopLevel('${tl.id}')" style="cursor: pointer; flex: 1;">
+                                <div class="list-item-title">${escapeHtml(tl.name)}</div>
+                                <div class="card-meta">${subCount} 个子目录 · ${conceptCount} 个概念</div>
+                            </div>
+                            <div class="list-item-actions">
+                                <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); editTopLevel('${tl.id}')">✏️</button>
+                                <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; color: #E17055;" onclick="event.stopPropagation(); deleteTopLevel('${tl.id}')">🗑️</button>
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -757,15 +765,19 @@
                 const unmasteredCount = data.concepts.filter(c => c.subLevelId === sl.id && !c.mastered).length;
 
                 return `
-                    <div class="card" onclick="openSubLevel('${sl.id}')">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div class="card-title">${escapeHtml(sl.name)}</div>
+                    <div class="list-item">
+                        <div class="list-item-header">
+                            <div onclick="openSubLevel('${sl.id}')" style="cursor: pointer; flex: 1;">
+                                <div class="list-item-title">${escapeHtml(sl.name)}</div>
                                 <div class="card-meta">${conceptCount} 个概念${unmasteredCount > 0 ? ` · ${unmasteredCount} 个未掌握` : ''}</div>
                             </div>
-                            ${unmasteredCount > 0 ? `
-                                <button class="btn btn-primary" style="padding: 8px 16px; font-size: 12px;" onclick="event.stopPropagation(); startQuiz('${sl.id}')">🎓 考核</button>
-                            ` : ''}
+                            <div class="list-item-actions">
+                                <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); editSubLevel('${sl.id}')">✏️</button>
+                                <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; color: #E17055;" onclick="event.stopPropagation(); deleteSubLevel('${sl.id}')">🗑️</button>
+                                ${unmasteredCount > 0 ? `
+                                    <button class="btn btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); startQuiz('${sl.id}')">🎓</button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -869,17 +881,16 @@
                 return;
             }
 
-            // Shuffle concepts and take up to 10
+            // Shuffle concepts
             const shuffled = [...unmastered].sort(() => Math.random() - 0.5).slice(0, 10);
             
-            // Build queue with pattern: ①②①③②④③⑤④⑤ (each concept appears twice)
+            // Build queue with ①②①③②④③⑤④⑤ pattern
             quizQueue = [];
             for (let i = 0; i < shuffled.length; i++) {
                 quizQueue.push(shuffled[i]);
-            }
-            // Add all concepts again for the second round
-            for (let i = 0; i < shuffled.length; i++) {
-                quizQueue.push(shuffled[i]);
+                if (i > 0) {
+                    quizQueue.push(shuffled[i - 1]);
+                }
             }
 
             quizIndex = 0;
@@ -1080,6 +1091,34 @@
             }
 
             hideAddForm();
+        }
+
+        function editTopLevel(id) {
+            showAddForm('topLevel', id);
+        }
+
+        function deleteTopLevel(id) {
+            if (confirm('确定要删除这个顶级目录吗？这将同时删除所有子目录和概念！')) {
+                const subLevelIds = data.subLevels.filter(s => s.topLevelId === id).map(s => s.id);
+                data.subLevels = data.subLevels.filter(s => s.topLevelId !== id);
+                data.concepts = data.concepts.filter(c => !subLevelIds.includes(c.subLevelId));
+                data.topLevels = data.topLevels.filter(t => t.id !== id);
+                saveData();
+                renderCategories();
+            }
+        }
+
+        function editSubLevel(id) {
+            showAddForm('subLevel', id);
+        }
+
+        function deleteSubLevel(id) {
+            if (confirm('确定要删除这个次级目录吗？这将同时删除所有概念！')) {
+                data.concepts = data.concepts.filter(c => c.subLevelId !== id);
+                data.subLevels = data.subLevels.filter(s => s.id !== id);
+                saveData();
+                renderSubLevels();
+            }
         }
 
         function editConcept(id) {
