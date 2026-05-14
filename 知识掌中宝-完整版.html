@@ -869,16 +869,17 @@
                 return;
             }
 
-            // Shuffle concepts
+            // Shuffle concepts and take up to 10
             const shuffled = [...unmastered].sort(() => Math.random() - 0.5).slice(0, 10);
             
-            // Build queue with ①②①③②④③⑤④⑤ pattern
+            // Build queue with pattern: ①②①③②④③⑤④⑤ (each concept appears twice)
             quizQueue = [];
             for (let i = 0; i < shuffled.length; i++) {
                 quizQueue.push(shuffled[i]);
-                if (i > 0) {
-                    quizQueue.push(shuffled[i - 1]);
-                }
+            }
+            // Add all concepts again for the second round
+            for (let i = 0; i < shuffled.length; i++) {
+                quizQueue.push(shuffled[i]);
             }
 
             quizIndex = 0;
@@ -895,7 +896,7 @@
             document.getElementById('quiz-question').textContent = concept.concept;
             document.getElementById('quiz-answer').textContent = concept.definition;
             document.getElementById('quiz-answer').style.display = 'none';
-            document.getElementById('quiz-input').value = conceptInputs[concept.id] || '';
+            document.getElementById('quiz-input').value = '';
             document.getElementById('btn-show-answer').style.display = 'inline-block';
             document.getElementById('btn-next').style.display = 'none';
             document.getElementById('btn-read').style.display = 'inline-block';
@@ -937,6 +938,21 @@
             quizIndex++;
             
             if (quizIndex >= quizQueue.length) {
+                // Check if all concepts are mastered
+                const allConcepts = data.concepts.filter(c => c.subLevelId === currentQuizSubLevelId);
+                const masteredCount = allConcepts.filter(c => c.mastered).length;
+                
+                if (masteredCount === allConcepts.length && allConcepts.length > 0) {
+                    // All mastered - ask to reset for new round
+                    if (confirm('🎉 所有概念都已掌握！\n\n点击"确定"重置所有概念，开始新一轮考核。\n点击"取消"返回主页。')) {
+                        allConcepts.forEach(c => {
+                            c.mastered = false;
+                        });
+                        saveData();
+                        navigateTo('quiz-select');
+                        return;
+                    }
+                }
                 navigateTo('quiz-complete');
                 return;
             }
