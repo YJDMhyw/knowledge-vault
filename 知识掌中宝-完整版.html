@@ -554,32 +554,30 @@
 
         <!-- Quiz Page -->
         <div id="quiz-page" class="page">
-            <button class="back-btn" onclick="navigateTo('quiz-select')">← 退出考核</button>
-            <h2 class="page-title">🎓 考核进行中</h2>
+            <button class="back-btn" onclick="navigateTo('quiz-select')">←</button>
+            <h2 class="page-title">考核</h2>
             <div class="quiz-container">
                 <div class="quiz-progress" id="quiz-progress"></div>
                 <div class="quiz-content-wrapper">
                     <div class="quiz-question" id="quiz-question"></div>
                     <div class="quiz-answer" id="quiz-answer" style="display: none;"></div>
                 </div>
-                <input type="text" class="quiz-input" id="quiz-input" placeholder="输入你的理解..." />
+                <input type="text" class="quiz-input" id="quiz-input" />
                 <div class="quiz-buttons">
-                    <button class="btn btn-secondary" onclick="restartQuiz()">🔄 重新考核</button>
-                    <button class="btn btn-secondary" id="btn-read" onclick="markAsRead()">📖 阅</button>
+                    <button class="btn btn-secondary" id="btn-read" onclick="markAsRead()">阅</button>
                     <button class="btn btn-primary" id="btn-show-answer" onclick="showAnswer()">显示答案</button>
-                    <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" style="display: none;">下一题 →</button>
+                    <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" style="display: none;">下一题</button>
                 </div>
             </div>
         </div>
 
         <!-- Quiz Complete Page -->
         <div id="quiz-complete-page" class="page">
-            <button class="back-btn" onclick="navigateTo('home')">← 返回主页</button>
+            <button class="back-btn" onclick="navigateTo('home')">←</button>
             <div style="text-align: center; padding: 60px 20px;">
-                <div style="font-size: 80px; margin-bottom: 24px;">🎉</div>
-                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 16px;">本轮考核完成！</h2>
-                <p style="color: #636E72; margin-bottom: 32px;">继续加油，你的知识储备越来越丰富了！</p>
-                <button class="btn btn-primary" onclick="navigateTo('quiz-select')">再来一轮</button>
+                <div style="font-size: 80px; margin-bottom: 24px;">✓</div>
+                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 32px;">考核完成</h2>
+                <button class="btn btn-primary" onclick="navigateTo('quiz-select')">返回</button>
             </div>
         </div>
 
@@ -796,9 +794,8 @@
                             <div class="list-item-actions">
                                 <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); editSubLevel('${sl.id}')">✏️</button>
                                 <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; color: #E17055;" onclick="event.stopPropagation(); deleteSubLevel('${sl.id}')">🗑️</button>
-                                ${unmasteredCount > 0 ? `
-                                    <button class="btn btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); startQuiz('${sl.id}')">🎓</button>
-                                ` : ''}
+                                <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); resetMastered('${sl.id}')">🔄</button>
+                                <button class="btn btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); startQuiz('${sl.id}')">🎓</button>
                             </div>
                         </div>
                     </div>
@@ -989,31 +986,10 @@
             }
         }
 
-        function restartQuiz() {
-            if (confirm('确定要重新开始考核吗？')) {
-                startQuiz(currentQuizSubLevelId);
-            }
-        }
-
         function nextQuestion() {
             quizIndex++;
             
             if (quizIndex >= quizQueue.length) {
-                // Check if all concepts are mastered
-                const allConcepts = data.concepts.filter(c => c.subLevelId === currentQuizSubLevelId);
-                const masteredCount = allConcepts.filter(c => c.mastered).length;
-                
-                if (masteredCount === allConcepts.length && allConcepts.length > 0) {
-                    // All mastered - ask to reset for new round
-                    if (confirm('🎉 所有概念都已掌握！\n\n点击"确定"重置所有概念，开始新一轮考核。\n点击"取消"返回主页。')) {
-                        allConcepts.forEach(c => {
-                            c.mastered = false;
-                        });
-                        saveData();
-                        navigateTo('quiz-select');
-                        return;
-                    }
-                }
                 navigateTo('quiz-complete');
                 return;
             }
@@ -1166,6 +1142,16 @@
             if (confirm('确定要删除这个次级目录吗？这将同时删除所有概念！')) {
                 data.concepts = data.concepts.filter(c => c.subLevelId !== id);
                 data.subLevels = data.subLevels.filter(s => s.id !== id);
+                saveData();
+                renderSubLevels();
+            }
+        }
+
+        function resetMastered(subLevelId) {
+            if (confirm('确定要重置这个目录的掌握状态吗？')) {
+                data.concepts.filter(c => c.subLevelId === subLevelId).forEach(c => {
+                    c.mastered = false;
+                });
                 saveData();
                 renderSubLevels();
             }
