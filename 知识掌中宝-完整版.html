@@ -175,14 +175,24 @@
             margin-bottom: 20px;
         }
 
+        .quiz-content-wrapper {
+            position: relative;
+            min-height: 120px;
+            margin-bottom: 24px;
+        }
+
         .quiz-question {
             font-size: 28px;
             font-weight: 700;
-            margin-bottom: 24px;
             padding: 24px;
             background: white;
             border-radius: 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            transition: opacity 0.3s ease;
         }
 
         .quiz-answer {
@@ -192,13 +202,22 @@
             background: rgba(0, 184, 148, 0.05);
             border: 1px solid rgba(0, 184, 148, 0.2);
             border-radius: 16px;
-            margin-top: 24px;
-            animation: fadeIn 0.3s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
 
         .quiz-input {
@@ -539,10 +558,13 @@
             <h2 class="page-title">🎓 考核进行中</h2>
             <div class="quiz-container">
                 <div class="quiz-progress" id="quiz-progress"></div>
-                <div class="quiz-question" id="quiz-question"></div>
+                <div class="quiz-content-wrapper">
+                    <div class="quiz-question" id="quiz-question"></div>
+                    <div class="quiz-answer" id="quiz-answer" style="display: none;"></div>
+                </div>
                 <input type="text" class="quiz-input" id="quiz-input" placeholder="输入你的理解..." />
-                <div class="quiz-answer" id="quiz-answer" style="display: none;"></div>
                 <div class="quiz-buttons">
+                    <button class="btn btn-secondary" onclick="restartQuiz()">🔄 重新考核</button>
                     <button class="btn btn-secondary" id="btn-read" onclick="markAsRead()">📖 阅</button>
                     <button class="btn btn-primary" id="btn-show-answer" onclick="showAnswer()">显示答案</button>
                     <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" style="display: none;">下一题 →</button>
@@ -892,6 +914,10 @@
                     quizQueue.push(shuffled[i - 1]);
                 }
             }
+            // Add the last concept one more time to complete the pattern
+            if (shuffled.length > 0) {
+                quizQueue.push(shuffled[shuffled.length - 1]);
+            }
 
             quizIndex = 0;
             conceptInputs = {};
@@ -906,7 +932,16 @@
             document.getElementById('quiz-progress').textContent = `第 ${quizIndex + 1} / ${total} 题`;
             document.getElementById('quiz-question').textContent = concept.concept;
             document.getElementById('quiz-answer').textContent = concept.definition;
-            document.getElementById('quiz-answer').style.display = 'none';
+            
+            // Reset the visual state
+            const questionEl = document.getElementById('quiz-question');
+            const answerEl = document.getElementById('quiz-answer');
+            
+            questionEl.style.opacity = '1';
+            questionEl.style.display = 'block';
+            answerEl.style.opacity = '0';
+            answerEl.style.display = 'block';
+            
             document.getElementById('quiz-input').value = '';
             document.getElementById('btn-show-answer').style.display = 'inline-block';
             document.getElementById('btn-next').style.display = 'none';
@@ -921,7 +956,16 @@
         }
 
         function showAnswer() {
-            document.getElementById('quiz-answer').style.display = 'block';
+            const questionEl = document.getElementById('quiz-question');
+            const answerEl = document.getElementById('quiz-answer');
+            
+            // Fade out question and fade in answer
+            questionEl.style.opacity = '0';
+            setTimeout(() => {
+                questionEl.style.display = 'none';
+                answerEl.style.opacity = '1';
+            }, 300);
+            
             document.getElementById('btn-show-answer').style.display = 'none';
             document.getElementById('btn-read').style.display = 'none';
             document.getElementById('btn-next').style.display = 'inline-block';
@@ -942,6 +986,12 @@
                         saveData();
                     }
                 }
+            }
+        }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始考核吗？')) {
+                startQuiz(currentQuizSubLevelId);
             }
         }
 
