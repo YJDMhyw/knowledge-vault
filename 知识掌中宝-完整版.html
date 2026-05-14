@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#00B894" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="知识宝" />
+    <meta name="description" content="专注于概念与定义学习的记录应用" />
+    <title>知识掌中宝</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #FAFAFA 0%, #F0F4F8 100%);
+            color: #2D3436;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, #00B894 0%, #00D9A5 100%);
+            color: white;
+            padding: 40px 24px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 184, 148, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .app-header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        /* Navigation */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 24px;
+        }
+
+        .nav-card {
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .nav-card:hover,
+        .nav-card:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 184, 148, 0.15);
+            border-color: #00B894;
+        }
+
+        .nav-card-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .nav-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .nav-card-desc {
+            font-size: 13px;
+            color: #636E72;
+        }
+
+        /* Page Styles */
+        .page {
+            display: none;
+            padding: 24px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #F8F9FA;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00B894;
+            margin-bottom: 20px;
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 184, 148, 0.15);
+            border-color: #00B894;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-meta {
+            font-size: 13px;
+            color: #636E72;
+        }
+
+        /* Quiz Styles */
+        .quiz-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .quiz-progress {
+            font-size: 14px;
+            color: #636E72;
+            margin-bottom: 20px;
+        }
+
+        .quiz-question {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding: 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .quiz-answer {
+            font-size: 18px;
+            color: #00B894;
+            padding: 24px;
+            background: rgba(0, 184, 148, 0.05);
+            border: 1px solid rgba(0, 184, 148, 0.2);
+            border-radius: 16px;
+            margin-top: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-input {
+            width: 100%;
+            padding: 16px;
+            border: 1.5px solid #E8E8E8;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .quiz-input:focus {
+            outline: none;
+            border-color: #00B894;
+        }
+
+        .quiz-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00B894 0%, #00D9A5 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1.5px solid #E8E8E8;
+            color: #636E72;
+        }
+
+        .btn-secondary:hover {
+            background: #F8F9FA;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2D3436;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #E8E8E8;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00B894;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00B894;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #636E72;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #636E72;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 16px;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00B894 0%, #00D9A5 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 184, 148, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 184, 148, 0.1);
+            color: #00B894;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* List */
+        .list-item {
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .list-item-content {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #636E72;
+            padding-top: 12px;
+            border-top: 1px solid #E8E8E8;
+        }
+
+        /* Responsive */
+        @media (min-width: 640px) {
+            .app-container {
+                max-width: 600px;
+            }
+
+            .nav-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Footer */
+        .app-footer {
+            text-align: center;
+            padding: 32px 0;
+            color: #636E72;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Home Page -->
+        <div id="home-page" class="page active">
+            <div class="app-header">
+                <h1>📚 知识掌中宝</h1>
+                <p>Knowledge Vault</p>
+            </div>
+
+            <div class="nav-grid">
+                <div class="nav-card" onclick="navigateTo('categories')">
+                    <div class="nav-card-icon">📁</div>
+                    <div class="nav-card-title">知识目录</div>
+                    <div class="nav-card-desc">三级分类</div>
+                </div>
+                <div class="nav-card" onclick="navigateTo('quiz-select')">
+                    <div class="nav-card-icon">🎓</div>
+                    <div class="nav-card-title">考核测试</div>
+                    <div class="nav-card-desc">概念推送</div>
+                </div>
+                <div class="nav-card" onclick="navigateTo('manage')">
+                    <div class="nav-card-icon">⚙️</div>
+                    <div class="nav-card-title">管理设置</div>
+                    <div class="nav-card-desc">数据管理</div>
+                </div>
+                <div class="nav-card" onclick="navigateTo('about')">
+                    <div class="nav-card-icon">ℹ️</div>
+                    <div class="nav-card-title">关于</div>
+                    <div class="nav-card-desc">使用说明</div>
+                </div>
+            </div>
+
+            <div style="padding: 0 24px;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-categories">0</div>
+                        <div class="stat-label">顶级目录</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-concepts">0</div>
+                        <div class="stat-label">概念总数</div>
+                    </div>
+                </div>
+
+                <div style="background: white; border: 1px solid #E8E8E8; border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+                    <h2 style="font-size: 18px; font-weight: 700; color: #00B894; margin-bottom: 16px;">
+                        ✨ 快速开始
+                    </h2>
+                    <p style="color: #636E72; line-height: 1.6; margin-bottom: 12px;">
+                        1. 点击「知识目录」添加你的第一个概念
+                    </p>
+                    <p style="color: #636E72; line-height: 1.6;">
+                        2. 积累一些概念后，点击「考核测试」开始复习
+                    </p>
+                </div>
+
+                <div class="app-footer">
+                    <p>知识掌中宝 © 2026</p>
+                    <p style="margin-top: 8px;">✅ 数据自动保存到本地</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Page -->
+        <div id="categories-page" class="page">
+            <button class="back-btn" onclick="navigateTo('home')">← 返回主页</button>
+            <h2 class="page-title">📁 知识目录</h2>
+            <div id="categories-list" class="card-grid"></div>
+            <div class="empty-state" id="categories-empty" style="display: none;">
+                <div class="empty-icon">📁</div>
+                <div class="empty-text">还没有顶级目录，点击右下角 + 添加！</div>
+            </div>
+            <button class="fab" onclick="showAddForm('topLevel')">+</button>
+        </div>
+
+        <!-- Sub-Levels Page -->
+        <div id="sublevels-page" class="page">
+            <button class="back-btn" onclick="goBackFromSubLevels()">← 返回</button>
+            <h2 class="page-title" id="sublevels-title">📂 次级目录</h2>
+            <div id="sublevels-list" class="card-grid"></div>
+            <div class="empty-state" id="sublevels-empty" style="display: none;">
+                <div class="empty-icon">📂</div>
+                <div class="empty-text">还没有次级目录，点击右下角 + 添加！</div>
+            </div>
+            <button class="fab" onclick="showAddForm('subLevel')">+</button>
+        </div>
+
+        <!-- Concepts Page -->
+        <div id="concepts-page" class="page">
+            <button class="back-btn" onclick="goBackFromConcepts()">← 返回</button>
+            <h2 class="page-title" id="concepts-title">📝 概念卡片</h2>
+            <div id="concepts-list"></div>
+            <div class="empty-state" id="concepts-empty" style="display: none;">
+                <div class="empty-icon">📝</div>
+                <div class="empty-text">还没有概念，点击右下角 + 添加！</div>
+            </div>
+            <button class="fab" onclick="showAddForm('concept')">+</button>
+        </div>
+
+        <!-- Quiz Select Page -->
+        <div id="quiz-select-page" class="page">
+            <button class="back-btn" onclick="navigateTo('home')">← 返回主页</button>
+            <h2 class="page-title">🎓 选择考核目录</h2>
+            <div id="quiz-select-list" class="card-grid"></div>
+            <div class="empty-state" id="quiz-select-empty" style="display: none;">
+                <div class="empty-icon">🎓</div>
+                <div class="empty-text">先去知识目录添加一些概念吧！</div>
+            </div>
+        </div>
+
+        <!-- Quiz Page -->
+        <div id="quiz-page" class="page">
+            <button class="back-btn" onclick="navigateTo('quiz-select')">← 退出考核</button>
+            <h2 class="page-title">🎓 考核进行中</h2>
+            <div class="quiz-container">
+                <div class="quiz-progress" id="quiz-progress"></div>
+                <div class="quiz-question" id="quiz-question"></div>
+                <input type="text" class="quiz-input" id="quiz-input" placeholder="输入你的理解..." />
+                <div class="quiz-answer" id="quiz-answer" style="display: none;"></div>
+                <div class="quiz-buttons">
+                    <button class="btn btn-secondary" id="btn-read" onclick="markAsRead()">📖 阅</button>
+                    <button class="btn btn-primary" id="btn-show-answer" onclick="showAnswer()">显示答案</button>
+                    <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" style="display: none;">下一题 →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Complete Page -->
+        <div id="quiz-complete-page" class="page">
+            <button class="back-btn" onclick="navigateTo('home')">← 返回主页</button>
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 80px; margin-bottom: 24px;">🎉</div>
+                <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 16px;">本轮考核完成！</h2>
+                <p style="color: #636E72; margin-bottom: 32px;">继续加油，你的知识储备越来越丰富了！</p>
+                <button class="btn btn-primary" onclick="navigateTo('quiz-select')">再来一轮</button>
+            </div>
+        </div>
+
+        <!-- Manage Page -->
+        <div id="manage-page" class="page">
+            <button class="back-btn" onclick="navigateTo('home')">← 返回主页</button>
+            <h2 class="page-title">⚙️ 管理设置</h2>
+
+            <div style="background: white; border: 1px solid #E8E8E8; border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">数据管理</h3>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="exportData()">📤 导出数据</button>
+                    <button class="btn btn-secondary" onclick="importData()">📥 导入数据</button>
+                    <button class="btn btn-secondary" style="color: #E17055; border-color: #E17055;" onclick="clearAllData()">🗑️ 清空所有数据</button>
+                </div>
+            </div>
+
+            <div style="background: white; border: 1px solid #E8E8E8; border-radius: 16px; padding: 24px;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">统计信息</h3>
+                <p style="color: #636E72; margin-bottom: 8px;">顶级目录: <span id="manage-stat-top">0</span></p>
+                <p style="color: #636E72; margin-bottom: 8px;">次级目录: <span id="manage-stat-sub">0</span></p>
+                <p style="color: #636E72;">概念总数: <span id="manage-stat-concepts">0</span></p>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about-page" class="page">
+            <button class="back-btn" onclick="navigateTo('home')">← 返回主页</button>
+            <h2 class="page-title">ℹ️ 关于</h2>
+
+            <div style="background: white; border: 1px solid #E8E8E8; border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+                <h3 style="font-size: 18px; font-weight: 600; color: #00B894; margin-bottom: 16px;">
+                    ✨ 核心功能
+                </h3>
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li style="padding: 12px 0; border-bottom: 1px solid #E8E8E8;">
+                        <strong>三级分类管理</strong> - 顶级目录 → 次级目录 → 概念卡片
+                    </li>
+                    <li style="padding: 12px 0; border-bottom: 1px solid #E8E8E8;">
+                        <strong>智能考核推送</strong> - ①②①③②④③⑤④⑤ 模式
+                    </li>
+                    <li style="padding: 12px 0; border-bottom: 1px solid #E8E8E8;">
+                        <strong>"阅"按钮标记</strong> - 已掌握概念不再推送
+                    </li>
+                    <li style="padding: 12px 0;">
+                        <strong>本地存储</strong> - 数据自动保存，刷新不丢失
+                    </li>
+                </ul>
+            </div>
+
+            <div style="background: white; border: 1px solid #E8E8E8; border-radius: 16px; padding: 24px;">
+                <h3 style="font-size: 18px; font-weight: 600; color: #00B894; margin-bottom: 16px;">
+                    📖 使用说明
+                </h3>
+                <ol style="padding-left: 20px; color: #636E72; line-height: 2;">
+                    <li>进入「知识目录」，创建顶级目录</li>
+                    <li>在顶级目录下创建次级目录</li>
+                    <li>在次级目录下添加概念卡片</li>
+                    <li>去「考核测试」选择一个次级目录开始复习</li>
+                    <li>点击「阅」标记已掌握，或输入理解后显示答案</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Add Form Modal -->
+        <div id="add-form-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; padding: 20px; overflow-y: auto;">
+            <div style="background: white; border-radius: 20px; padding: 24px; max-width: 500px; margin: 40px auto;">
+                <h3 id="form-title" style="font-size: 20px; font-weight: 700; color: #00B894; margin-bottom: 20px;"></h3>
+                <div id="form-content"></div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="hideAddForm()">取消</button>
+                    <button class="btn btn-primary" style="flex: 1;" onclick="saveForm()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA MANAGEMENT ====================
+        const STORAGE_KEY = 'knowledge-vault-data';
+        let data = {
+            topLevels: [],
+            subLevels: [],
+            concepts: []
+        };
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    data = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Failed to load data:', e);
+                }
+            }
+            updateStats();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            updateStats();
+        }
+
+        // Generate unique ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // ==================== NAVIGATION ====================
+        let currentPage = 'home';
+        let navHistory = [];
+        let currentTopLevelId = null;
+        let currentSubLevelId = null;
+        let currentFormType = null;
+        let currentEditId = null;
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page + '-page').classList.add('active');
+            currentPage = page;
+
+            if (page === 'categories') {
+                renderCategories();
+            } else if (page === 'quiz-select') {
+                renderQuizSelect();
+            } else if (page === 'manage') {
+                updateManageStats();
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        // ==================== CATEGORIES ====================
+        function renderCategories() {
+            const list = document.getElementById('categories-list');
+            const empty = document.getElementById('categories-empty');
+
+            if (data.topLevels.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = data.topLevels.map(tl => {
+                const subCount = data.subLevels.filter(s => s.topLevelId === tl.id).length;
+                const conceptCount = data.concepts.filter(c => {
+                    const sub = data.subLevels.find(s => s.id === c.subLevelId);
+                    return sub && sub.topLevelId === tl.id;
+                }).length;
+
+                return `
+                    <div class="card" onclick="openTopLevel('${tl.id}')">
+                        <div class="card-title">${escapeHtml(tl.name)}</div>
+                        <div class="card-meta">${subCount} 个子目录 · ${conceptCount} 个概念</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openTopLevel(id) {
+            currentTopLevelId = id;
+            navHistory.push('categories');
+            renderSubLevels();
+            navigateTo('sublevels');
+        }
+
+        function goBackFromSubLevels() {
+            currentTopLevelId = null;
+            if (navHistory.length > 0) {
+                navigateTo(navHistory.pop());
+            } else {
+                navigateTo('home');
+            }
+        }
+
+        // ==================== SUB-LEVELS ====================
+        function renderSubLevels() {
+            const tl = data.topLevels.find(t => t.id === currentTopLevelId);
+            document.getElementById('sublevels-title').textContent = `📂 ${tl ? tl.name : ''}`;
+
+            const list = document.getElementById('sublevels-list');
+            const empty = document.getElementById('sublevels-empty');
+            const subLevels = data.subLevels.filter(s => s.topLevelId === currentTopLevelId);
+
+            if (subLevels.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = subLevels.map(sl => {
+                const conceptCount = data.concepts.filter(c => c.subLevelId === sl.id).length;
+                const unmasteredCount = data.concepts.filter(c => c.subLevelId === sl.id && !c.mastered).length;
+
+                return `
+                    <div class="card" onclick="openSubLevel('${sl.id}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="card-title">${escapeHtml(sl.name)}</div>
+                                <div class="card-meta">${conceptCount} 个概念${unmasteredCount > 0 ? ` · ${unmasteredCount} 个未掌握` : ''}</div>
+                            </div>
+                            ${unmasteredCount > 0 ? `
+                                <button class="btn btn-primary" style="padding: 8px 16px; font-size: 12px;" onclick="event.stopPropagation(); startQuiz('${sl.id}')">🎓 考核</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openSubLevel(id) {
+            currentSubLevelId = id;
+            navHistory.push('sublevels');
+            renderConcepts();
+            navigateTo('concepts');
+        }
+
+        function goBackFromConcepts() {
+            currentSubLevelId = null;
+            if (navHistory.length > 0) {
+                navigateTo(navHistory.pop());
+            } else {
+                navigateTo('categories');
+            }
+        }
+
+        // ==================== CONCEPTS ====================
+        function renderConcepts() {
+            const sl = data.subLevels.find(s => s.id === currentSubLevelId);
+            document.getElementById('concepts-title').textContent = `📝 ${sl ? sl.name : ''}`;
+
+            const list = document.getElementById('concepts-list');
+            const empty = document.getElementById('concepts-empty');
+            const concepts = data.concepts.filter(c => c.subLevelId === currentSubLevelId);
+
+            if (concepts.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = concepts.map(c => `
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <div>
+                            <div class="list-item-title">${escapeHtml(c.concept)}</div>
+                            <div style="display: flex; gap: 8px; margin-top: 4px;">
+                                <span class="badge">${c.mastered ? '✅ 已掌握' : '⏳ 未掌握'}</span>
+                            </div>
+                        </div>
+                        <div class="list-item-actions">
+                            <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="editConcept('${c.id}')">✏️</button>
+                            <button class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; color: #E17055;" onclick="deleteConcept('${c.id}')">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="list-item-content">
+                        ${escapeHtml(c.definition)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== QUIZ ====================
+        let quizQueue = [];
+        let quizIndex = 0;
+        let currentQuizSubLevelId = null;
+        let conceptInputs = {};
+
+        function renderQuizSelect() {
+            const list = document.getElementById('quiz-select-list');
+            const empty = document.getElementById('quiz-select-empty');
+            
+            const subLevelsWithConcepts = data.subLevels.filter(sl => {
+                const unmastered = data.concepts.filter(c => c.subLevelId === sl.id && !c.mastered);
+                return unmastered.length > 0;
+            });
+
+            if (subLevelsWithConcepts.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = subLevelsWithConcepts.map(sl => {
+                const tl = data.topLevels.find(t => t.id === sl.topLevelId);
+                const unmasteredCount = data.concepts.filter(c => c.subLevelId === sl.id && !c.mastered).length;
+
+                return `
+                    <div class="card" onclick="startQuiz('${sl.id}')">
+                        <div class="card-title">${escapeHtml(sl.name)}</div>
+                        <div class="card-meta">${tl ? tl.name : ''} · ${unmasteredCount} 个未掌握概念</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function startQuiz(subLevelId) {
+            currentQuizSubLevelId = subLevelId;
+            const unmastered = data.concepts.filter(c => c.subLevelId === subLevelId && !c.mastered);
+            
+            if (unmastered.length === 0) {
+                alert('这个目录下的所有概念都已掌握！');
+                return;
+            }
+
+            // Shuffle concepts
+            const shuffled = [...unmastered].sort(() => Math.random() - 0.5).slice(0, 10);
+            
+            // Build queue with ①②①③②④③⑤④⑤ pattern
+            quizQueue = [];
+            for (let i = 0; i < shuffled.length; i++) {
+                quizQueue.push(shuffled[i]);
+                if (i > 0) {
+                    quizQueue.push(shuffled[i - 1]);
+                }
+            }
+
+            quizIndex = 0;
+            conceptInputs = {};
+            renderQuiz();
+            navigateTo('quiz');
+        }
+
+        function renderQuiz() {
+            const total = quizQueue.length;
+            const concept = quizQueue[quizIndex];
+
+            document.getElementById('quiz-progress').textContent = `第 ${quizIndex + 1} / ${total} 题`;
+            document.getElementById('quiz-question').textContent = concept.concept;
+            document.getElementById('quiz-answer').textContent = concept.definition;
+            document.getElementById('quiz-answer').style.display = 'none';
+            document.getElementById('quiz-input').value = conceptInputs[concept.id] || '';
+            document.getElementById('btn-show-answer').style.display = 'inline-block';
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-read').style.display = 'inline-block';
+        }
+
+        function markAsRead() {
+            const concept = quizQueue[quizIndex];
+            concept.mastered = true;
+            saveData();
+            showAnswer();
+        }
+
+        function showAnswer() {
+            document.getElementById('quiz-answer').style.display = 'block';
+            document.getElementById('btn-show-answer').style.display = 'none';
+            document.getElementById('btn-read').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'inline-block';
+            
+            const concept = quizQueue[quizIndex];
+            const inputValue = document.getElementById('quiz-input').value;
+            if (inputValue) {
+                conceptInputs[concept.id] = inputValue;
+                
+                // Check if both inputs have content
+                const firstIndex = quizQueue.findIndex(c => c.id === concept.id);
+                const secondIndex = quizQueue.slice(firstIndex + 1).findIndex(c => c.id === concept.id) + firstIndex + 1;
+                
+                if (firstIndex !== -1 && secondIndex !== -1) {
+                    const firstHasInput = conceptInputs[concept.id] && quizIndex === secondIndex;
+                    if (firstHasInput) {
+                        concept.mastered = true;
+                        saveData();
+                    }
+                }
+            }
+        }
+
+        function nextQuestion() {
+            quizIndex++;
+            
+            if (quizIndex >= quizQueue.length) {
+                navigateTo('quiz-complete');
+                return;
+            }
+
+            // Skip if concept is already mastered
+            const concept = quizQueue[quizIndex];
+            if (concept.mastered) {
+                nextQuestion();
+                return;
+            }
+
+            renderQuiz();
+        }
+
+        // ==================== FORMS ====================
+        function showAddForm(type, editId = null) {
+            currentFormType = type;
+            currentEditId = editId;
+            
+            const modal = document.getElementById('add-form-modal');
+            const title = document.getElementById('form-title');
+            const content = document.getElementById('form-content');
+
+            let formHtml = '';
+
+            if (type === 'topLevel') {
+                const editItem = editId ? data.topLevels.find(t => t.id === editId) : null;
+                title.textContent = editId ? '✏️ 编辑顶级目录' : '➕ 添加顶级目录';
+                formHtml = `
+                    <div class="form-group">
+                        <label class="form-label">目录名称</label>
+                        <input type="text" class="form-input" id="input-name" value="${editItem ? escapeHtml(editItem.name) : ''}" placeholder="输入目录名称..." />
+                    </div>
+                `;
+            } else if (type === 'subLevel') {
+                const editItem = editId ? data.subLevels.find(s => s.id === editId) : null;
+                title.textContent = editId ? '✏️ 编辑次级目录' : '➕ 添加次级目录';
+                formHtml = `
+                    <div class="form-group">
+                        <label class="form-label">目录名称</label>
+                        <input type="text" class="form-input" id="input-name" value="${editItem ? escapeHtml(editItem.name) : ''}" placeholder="输入目录名称..." />
+                    </div>
+                `;
+            } else if (type === 'concept') {
+                const editItem = editId ? data.concepts.find(c => c.id === editId) : null;
+                title.textContent = editId ? '✏️ 编辑概念' : '➕ 添加概念';
+                formHtml = `
+                    <div class="form-group">
+                        <label class="form-label">概念名称</label>
+                        <input type="text" class="form-input" id="input-concept" value="${editItem ? escapeHtml(editItem.concept) : ''}" placeholder="输入概念名称..." />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">定义</label>
+                        <textarea class="form-input form-textarea" id="input-definition" placeholder="输入定义...">${editItem ? escapeHtml(editItem.definition) : ''}</textarea>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = formHtml;
+            modal.style.display = 'block';
+        }
+
+        function hideAddForm() {
+            document.getElementById('add-form-modal').style.display = 'none';
+            currentFormType = null;
+            currentEditId = null;
+        }
+
+        function saveForm() {
+            if (currentFormType === 'topLevel') {
+                const name = document.getElementById('input-name').value.trim();
+                if (!name) {
+                    alert('请输入目录名称');
+                    return;
+                }
+
+                if (currentEditId) {
+                    const item = data.topLevels.find(t => t.id === currentEditId);
+                    if (item) item.name = name;
+                } else {
+                    data.topLevels.push({ id: generateId(), name: name });
+                }
+                saveData();
+                renderCategories();
+            } else if (currentFormType === 'subLevel') {
+                const name = document.getElementById('input-name').value.trim();
+                if (!name) {
+                    alert('请输入目录名称');
+                    return;
+                }
+
+                if (currentEditId) {
+                    const item = data.subLevels.find(s => s.id === currentEditId);
+                    if (item) item.name = name;
+                } else {
+                    data.subLevels.push({ id: generateId(), name: name, topLevelId: currentTopLevelId });
+                }
+                saveData();
+                renderSubLevels();
+            } else if (currentFormType === 'concept') {
+                const concept = document.getElementById('input-concept').value.trim();
+                const definition = document.getElementById('input-definition').value.trim();
+                if (!concept || !definition) {
+                    alert('请填写概念和定义');
+                    return;
+                }
+
+                if (currentEditId) {
+                    const item = data.concepts.find(c => c.id === currentEditId);
+                    if (item) {
+                        item.concept = concept;
+                        item.definition = definition;
+                    }
+                } else {
+                    data.concepts.push({ 
+                        id: generateId(), 
+                        concept: concept, 
+                        definition: definition, 
+                        subLevelId: currentSubLevelId,
+                        mastered: false
+                    });
+                }
+                saveData();
+                renderConcepts();
+            }
+
+            hideAddForm();
+        }
+
+        function editConcept(id) {
+            showAddForm('concept', id);
+        }
+
+        function deleteConcept(id) {
+            if (confirm('确定要删除这个概念吗？')) {
+                data.concepts = data.concepts.filter(c => c.id !== id);
+                saveData();
+                renderConcepts();
+            }
+        }
+
+        // ==================== MANAGE ====================
+        function updateManageStats() {
+            document.getElementById('manage-stat-top').textContent = data.topLevels.length;
+            document.getElementById('manage-stat-sub').textContent = data.subLevels.length;
+            document.getElementById('manage-stat-concepts').textContent = data.concepts.length;
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'knowledge-vault-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const imported = JSON.parse(e.target.result);
+                            if (confirm('导入将覆盖现有数据，确定吗？')) {
+                                data = imported;
+                                saveData();
+                                alert('导入成功！');
+                            }
+                        } catch (e) {
+                            alert('导入失败：无效的JSON文件');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function clearAllData() {
+            if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
+                data = { topLevels: [], subLevels: [], concepts: [] };
+                saveData();
+                alert('数据已清空');
+            }
+        }
+
+        // ==================== UTILS ====================
+        function updateStats() {
+            document.getElementById('stat-categories').textContent = data.topLevels.length;
+            document.getElementById('stat-concepts').textContent = data.concepts.length;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            
+            // Add some sample data if empty
+            if (data.topLevels.length === 0 && data.subLevels.length === 0 && data.concepts.length === 0) {
+                const tlId = generateId();
+                const slId = generateId();
+                
+                data.topLevels.push({ id: tlId, name: '前端开发' });
+                data.subLevels.push({ id: slId, name: 'JavaScript基础', topLevelId: tlId });
+                data.concepts.push({ 
+                    id: generateId(), 
+                    concept: '什么是闭包？', 
+                    definition: '闭包是指有权访问另一个函数作用域中变量的函数。创建闭包的常见方式是在一个函数内部创建另一个函数。', 
+                    subLevelId: slId,
+                    mastered: false
+                });
+                data.concepts.push({ 
+                    id: generateId(), 
+                    concept: '什么是原型链？', 
+                    definition: '原型链是JavaScript实现继承的主要方式。每个对象都有一个__proto__属性指向它的原型对象，原型对象也有自己的原型，直到null为止，形成一条链。', 
+                    subLevelId: slId,
+                    mastered: false
+                });
+                
+                saveData();
+            }
+        });
+    </script>
+</body>
+</html>
